@@ -1,0 +1,98 @@
+<!Doctype: HTML w/ Processing>
+
+<html>
+
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Processing Demo</title>
+      <script type="text/javascript" src="js/processing.js"></script>
+  </head>
+  
+  <body>
+    <h1>Granada High Tutorial</h1>
+    <p>Processing demo</p>
+    
+    <script type="text/processing">
+    
+    import processing.sound.*;
+    PImage img;
+
+    AudioIn input;
+    Amplitude analyzer;
+
+void setup() {
+   size(window.innerWidth, window.innerHeight, P3D); 
+
+  img = loadImage("adapt.jpg");
+  img.resize(1250, 790);
+  imageMode(CENTER);
+
+  input = new AudioIn(this, 0);
+  input.start();
+  analyzer = new Amplitude(this);
+  analyzer.input(input);
+}
+
+void draw() {
+  background(0);
+
+  fill(255);
+  noStroke();
+  noCursor();
+
+  float tiles = 80;
+  float tileSize = width/tiles;
+  float vol = analyzer.analyze();
+
+  push();
+  translate(width/2, height/2);
+
+  if (mousePressed && mouseButton == RIGHT) {
+    for (int a = 0; a < tiles; a++) {
+      for (int b = 0; b < tiles; b++) {
+        color c = img.get(int(a * tileSize), int(b * tileSize));
+        float d = map(brightness(c), 0, 255, 1, 0); // last 2 parameters - invert
+        float mic =  vol * 40;
+        float z = map(d, 0, 1, mic * 70, mic * 40);
+        push();
+        translate(a * tileSize - width/2, b * tileSize - height/2, z);
+        rect(0, 0, tileSize * d, tileSize * d);
+        pop();
+      }
+    }
+  } else if (mousePressed && mouseButton == LEFT) {
+    for (int a = 0; a < tiles; a++) {
+      for (int b = 0; b < tiles; b++) {
+        color c = img.get(int(a * tileSize), int(b * tileSize));
+        float d = map(brightness(c), 0, 255, 1, 0); // last 2 parameters - invert
+        float mic =  vol * 40;
+        float z = map(d, 0, 1, mic * 70, mic * 40);
+        push();
+        translate(a * tileSize - width/2, b * tileSize - height/2, z);
+        rect(0, 0, tileSize * d + 3, tileSize * d);
+        pop();
+      }
+    }
+  } else {
+    for (int a = 0; a < tiles; a++) {
+      for (int b = 0; b < tiles; b++) {
+        color c = img.get(int(a * tileSize), int(b * tileSize));
+        float d = map(brightness(c), 0, 255, 1, 0); // last 2 parameters - invert
+        float mic =  vol * 40;
+        float z = map(d, 0, 1, mic * 70, mic * 40);
+        push();
+        translate(a * tileSize - width/2, b * tileSize - height/2, z);
+        ellipse(0, 0, tileSize * d, tileSize * d);
+        pop();
+      }
+    }
+  }
+  pop();
+}
+
+    </script>
+    <canvas id="sketch" style="border: 1px solid black;"></canvas>
+    
+  </body>
+  
+</html>
